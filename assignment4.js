@@ -1,116 +1,173 @@
-var stage = document.createElement('canvas');
-var stageColor = "rgba(255, 255, 255, 1)";
-stage.style.height = "500px";
-stage.style.width = "500px";
-stage.style.background = stageColor;
-stage.style.border = "2px solid black";
-document.body.appendChild(stage);
+//Creating the parent division
+window.onload = function() {
 
-var mouseDown = false;
-var ctx = stage.getContext("2d");
+    var dotcolor = "black";
+    var pencilsize = 15;
+    //Parent
+    var div = document.createElement("DIV");
+    div.style.backgroundColor = "#d8d8d8";
+    div.style.border = "1px solid black";
+    div.style.height = "500px";
+    div.style.width = "1000px";
+    div.style.position = "relative";
+    div.style.marginTop = "-10px";
+    document.body.appendChild(div);
 
-//Tools
-var colorsBox = document.createElement("div");
-colorsBox.style.height = "20px";
-colorsBox.style.width = "500px";
-colorsBox.style.marginTop = "-3px";
-colorsBox.style.backgroundColor = "grey";
-colorsBox.style.border = "1px solid black";
-colorsBox.setAttribute("id", "colorsBox");
-document.body.appendChild(colorsBox);
+    //Child
+    var child = document.createElement("DIV");
+    child.style.backgroundColor = "#fff";
+    child.style.height = "500px";
+    child.style.width = "500px";
+    child.style.margin = "0 auto";
+    child.style.cursor = "pointer";
+    div.appendChild(child);
 
-function insertTool (element, c){
-element.style.background = c;
-element.style.border = "2px solid #000";
-element.style.width = "20px";
-element.style.height = "20px";
-element.style.display = "inline-block"
-document.body.appendChild(element);
+    //color pallet
+
+    var pallete = document.createElement("DIV");
+    pallete.style.height = "150px";
+    pallete.style.width = "1000px";
+    pallete.style.border = "1px solid #000";
+
+    document.body.appendChild(pallete);
+
+    //Color boxes
+
+    var colors = ["green", "blue", "black", "red", "yellow", "white"];
+
+    for (var i = 0; i < colors.length; i++) {
+        var element = document.createElement("DIV");
+        element.setAttribute("id", colors[i]);
+        element.setAttribute("class", "color");
+        element.style.height = "30px";
+        element.style.width = "30px";
+        element.style.backgroundColor = colors[i];
+        element.style.border = "1px solid #000";
+        element.style.display = "inline-block";
+        element.style.margin = "1px";
+        pallete.appendChild(element);
+
+    }
+
+    // Putting a black dot on the screen
+
+    child.addEventListener("mousemove", putdot);
+    child.addEventListener("mousedown", engaged);
+    child.addEventListener("mouseup", disengaged)
+    var dragging = false;
+
+    function engaged(e) {
+        dragging = true;
+        putdot(e);
+    }
+
+    function disengaged() {
+        dragging = false
+    }
+
+    function putdot(e) {
+
+        if (dragging) {
+            var left = e.clientX;
+            var top = e.clientY;
+            var dot = document.createElement("DIV");
+            dot.style.height = pencilsize + "px";
+            dot.style.width = pencilsize + "px";
+            dot.style.borderRadius = "50%";
+            dot.style.backgroundColor = dotcolor;
+            dot.style.position = "absolute";
+            dot.style.left = left + "px";
+            dot.style.top = top + "px";
+            dot.style.display = "inline-block";
+            dot.style.transform = "translate(-110%,-50%)";
+
+            child.appendChild(dot);
+        }
+    }
+
+    //Changing the colors
+    var colorval = document.getElementsByClassName("color");
+    for (var i = 0; i < colorval.length; i++) {
+        colorval[i].addEventListener("click", changecolor);
+    }
+
+    function changecolor(e) {
+
+        var id = e.target.getAttribute("id");
+        dotcolor = id;
+    }
+
+    //Changing the pencil's size
+
+    //increase button
+
+    var d = document.createElement("DIV");
+    pallete.appendChild(d);
+
+    var increase = document.createElement("span");
+    increase.setAttribute("id", "inc")
+    increase.style.height = "30px";
+    increase.style.width = "30px";
+    increase.style.backgroundColor = "black";
+    increase.style.color = "white";
+    increase.innerHTML = "+";
+    increase.style.textAlign = "center";
+    increase.style.fontSize = "32px";
+    increase.style.padding = "5px";
+    increase.style.borderRadius = "5px";
+    increase.style.display = "inline-block";
+    increase.style.cursor = "pointer";
+    d.appendChild(increase);
+
+    //Current size indicator
+    var sizeindi = document.createElement("span");
+    sizeindi.setAttribute("id", "sizein");
+    sizeindi.innerHTML = "15";
+    sizeindi.style.display = "inline-block";
+    sizeindi.style.margin = "10px";
+
+    d.appendChild(sizeindi);
+
+    //decrese button
+
+    var decrease = document.createElement("span");
+    decrease.setAttribute("id", "dec");
+    decrease.style.height = "30px";
+    decrease.style.width = "30px";
+    decrease.style.backgroundColor = "black";
+    decrease.style.color = "white";
+    decrease.innerHTML = "-";
+    decrease.style.textAlign = "center";
+    decrease.style.fontSize = "32px";
+    decrease.style.padding = "5px";
+    decrease.style.borderRadius = "5px";
+    decrease.style.display = "inline-block";
+    decrease.style.cursor = "pointer";
+    d.appendChild(decrease);
+
+    //Adding event listeners to the + / - span elements
+    var incr = document.getElementById("inc");
+    incr.addEventListener("click", changesize);
+
+    var decr = document.getElementById("dec");
+    decr.addEventListener("click", changesize);
+
+    function changesize(e) {
+        var targetId = e.target.getAttribute("id");
+        var sizein = document.getElementById("sizein");
+        if (targetId == "inc") {
+            if (pencilsize < 55) {
+                pencilsize = pencilsize + 10;
+                sizein.innerHTML = pencilsize;
+            }
+
+        } else {
+
+            if (pencilsize > 5) {
+                pencilsize = pencilsize - 10;
+                sizein.innerHTML = pencilsize;
+            }
+        }
+    }
+
 }
-
-var color1 = "red", color2 = "yellow", color3 = "blue",color4 = "green", color5 = "pink", activeColor = color1;
-var toolColor1 = document.createElement('div');
-var toolColor2 = document.createElement('div');
-var toolColor3 = document.createElement('div');
-var toolColor4 = document.createElement('div');
-var toolColor5 = document.createElement('div');
-var erase = document.createElement('div');
-var img = document.createElement("img");
-insertTool(toolColor1, color1);
-insertTool(toolColor2, color2);
-insertTool(toolColor3, color3);
-insertTool(toolColor4, color4);
-insertTool(toolColor5, color5);
-insertTool(erase, "white");
-
-img.src = "http://icons.iconarchive.com/icons/iconsmind/outline/256/Pen-icon.png";
-img.style.width = "30px";
-img.style.height = "30px";
-img.style.display = "inline-block";
-document.body.appendChild(img);
-
-
-//Events
-toolColor1.addEventListener("click", function(){
-	activeColor = color1;
-	console.log(activeColor);
-}, false);
-
-toolColor2.addEventListener("click", function(){
-	activeColor = color2;
-	console.log(activeColor);
-}, false);
-
-toolColor3.addEventListener("click", function(){
-	activeColor = color3;
-	console.log(activeColor);
-}, false);
-
-toolColor4.addEventListener("click", function(){
-	activeColor = color4;
-	console.log(activeColor);
-}, false);
-
-toolColor5.addEventListener("click", function(){
-	activeColor = color5;
-	console.log(activeColor);
-}, false);
-
-erase.addEventListener("click", function(){
-	activeColor = stageColor;
-	console.log(activeColor);
-}, false);
-
-function getMousePosition(eve){
-	var stgData = stage.getBoundingClientRect();
-	return{
-		x: (eve.clientX - stgData.left),
-		y: (eve.clientY - stgData.top)
-	}
-}
-
-function draw(x, y){
-ctx.lineTo(x, y);
-ctx.strokeStyle = activeColor;
-ctx.lineWidth = 20;
-ctx.stroke();
-stage.style.cursor = "pointer";
-}
-
-stage.addEventListener("mousemove", function(eve){
-	var axi = getMousePosition(eve);
-	if(mouseDown)
-		draw(axi.x, axi.y);
-}, false);
-
-stage.addEventListener("mousedown", function(eve){
-	var axi = getMousePosition(eve);
-	ctx.beginPath();
-	ctx.moveTo(axi.x, axi.y);
-	mouseDown = true;
-}, false);
-
-stage.addEventListener("mouseup", function(eve){
-mouseDown = false;
-}, false);
-
